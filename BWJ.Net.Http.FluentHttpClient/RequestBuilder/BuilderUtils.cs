@@ -23,8 +23,11 @@ namespace BWJ.Net.Http.RequestBuilder
             var formProps = formType.GetProperties();
             foreach (var prop in formProps)
             {
-                var name = GetFormName(prop);
-                dict.Add(name, prop.GetValue(obj)?.ToString());
+                if(prop.GetCustomAttribute<JsonIgnoreAttribute>() is null)
+                {
+                    var name = GetFormName(prop);
+                    dict.Add(name, prop.GetValue(obj)?.ToString() ?? string.Empty);
+                }
             }
 
             return dict;
