@@ -136,7 +136,248 @@ namespace BWJ.Net.Http.RequestBuilder
             return this;
         }
 
-        public async Task<HttpResponseMessage> SendAsync()
+        public async Task<TResponse> SendAsync<TResponse>(
+            Func<HttpResponseMessage, Task<TResponse>> onSuccess,
+            Func<Exception, HttpResponseMessage, Task<TResponse>> onError,
+            HttpCompletionOption completionOption,
+            CancellationToken? cancellationToken = null)
+        {
+            if (onSuccess is null)
+            {
+                throw new ArgumentNullException(nameof(onSuccess));
+            }
+
+            if (onError is null)
+            {
+                throw new ArgumentNullException(nameof(onError));
+            }
+
+            return await ExecuteSendAsync(
+                onSuccess: onSuccess,
+                onError: onError,
+                cancellationToken: cancellationToken,
+                completionOption: completionOption);
+        }
+        public async Task<TResponse> SendAsync<TResponse>(
+            Func<HttpResponseMessage, Task<TResponse>> onSuccess,
+            Func<Exception, HttpResponseMessage, Task<TResponse>> onError,
+            CancellationToken? cancellationToken = null)
+        {
+            if (onSuccess is null)
+            {
+                throw new ArgumentNullException(nameof(onSuccess));
+            }
+
+            if (onError is null)
+            {
+                throw new ArgumentNullException(nameof(onError));
+            }
+
+            return await ExecuteSendAsync(
+                onSuccess: onSuccess,
+                onError: onError,
+                cancellationToken: cancellationToken);
+        }
+
+        public async Task<TResponse> SendAsync<TResponse>(
+            Func<HttpResponseMessage, Task<TResponse>> onSuccess,
+            Func<Exception, HttpResponseMessage, TResponse> onError,
+            HttpCompletionOption completionOption,
+            CancellationToken? cancellationToken = null)
+        => await SendAsync(
+            onSuccess,
+            async (exception, response) => await Task.FromResult(onError(exception, response)),
+            completionOption,
+            cancellationToken);
+        public async Task<TResponse> SendAsync<TResponse>(
+            Func<HttpResponseMessage, Task<TResponse>> onSuccess,
+            Func<Exception, HttpResponseMessage, TResponse> onError,
+            CancellationToken? cancellationToken = null)
+        => await SendAsync(
+            onSuccess,
+            async (exception, response) => await Task.FromResult(onError(exception, response)),
+            cancellationToken);
+
+        public async Task<TResponse> SendAsync<TResponse>(
+            Func<HttpResponseMessage, Task<TResponse>> onSuccess,
+            HttpCompletionOption completionOption,
+            CancellationToken? cancellationToken = null)
+        {
+            if (onSuccess is null)
+            {
+                throw new ArgumentNullException(nameof(onSuccess));
+            }
+
+            return await ExecuteSendAsync(
+                onSuccess: onSuccess,
+                onError: null,
+                cancellationToken: cancellationToken,
+                completionOption: completionOption);
+        }
+        public async Task<TResponse> SendAsync<TResponse>(
+            Func<HttpResponseMessage, Task<TResponse>> onSuccess,
+            CancellationToken? cancellationToken = null)
+        {
+            if (onSuccess is null)
+            {
+                throw new ArgumentNullException(nameof(onSuccess));
+            }
+
+            return await ExecuteSendAsync(
+                onSuccess: onSuccess,
+                onError: null,
+                cancellationToken: cancellationToken);
+        }
+
+        public async Task<HttpResponseMessage> SendAsync(
+            Func<HttpResponseMessage, Task<HttpResponseMessage>> onResponse,
+            HttpCompletionOption completionOption,
+            CancellationToken? cancellationToken = null)
+        {
+            if (onResponse is null)
+            {
+                throw new ArgumentNullException(nameof(onResponse));
+            }
+
+            return await ExecuteSendAsync(
+                onSuccess: onResponse,
+                onError: async (exception, response) => {
+                    if(response is not null)
+                    {
+                        return await onResponse(response);
+                    }
+                    else
+                    {
+                        throw exception;
+                    }
+                },
+                cancellationToken: cancellationToken,
+                completionOption);
+        }
+        public async Task<HttpResponseMessage> SendAsync(
+            Func<HttpResponseMessage, Task<HttpResponseMessage>> onResponse,
+            CancellationToken? cancellationToken = null)
+        {
+            if (onResponse is null)
+            {
+                throw new ArgumentNullException(nameof(onResponse));
+            }
+
+            return await ExecuteSendAsync(
+                onSuccess: onResponse,
+                onError: async (exception, response) => {
+                    if (response is not null)
+                    {
+                        return await onResponse(response);
+                    }
+                    else
+                    {
+                        throw exception;
+                    }
+                },
+                cancellationToken: cancellationToken);
+        }
+
+        public async Task<HttpResponseMessage> SendAsync(
+            Action<Exception, HttpResponseMessage> onError,
+            HttpCompletionOption completionOption,
+            CancellationToken? cancellationToken = null)
+        {
+            if (onError is null)
+            {
+                throw new ArgumentNullException(nameof(onError));
+            }
+
+            return await ExecuteSendAsync(
+                async resp => await Task.FromResult(resp),
+                async (exception, response) =>
+                {
+                    onError(exception, response);
+                    return await Task.FromResult(response);
+                },
+                cancellationToken,
+                completionOption);
+        }
+        public async Task<HttpResponseMessage> SendAsync(
+            Action<Exception, HttpResponseMessage> onError,
+            CancellationToken? cancellationToken = null)
+        {
+            if (onError is null)
+            {
+                throw new ArgumentNullException(nameof(onError));
+            }
+
+            return await ExecuteSendAsync(
+                async resp => await Task.FromResult(resp),
+                async (exception, response) =>
+                {
+                    onError(exception, response);
+                    return await Task.FromResult(response);
+                },
+                cancellationToken);
+        }
+
+        public async Task<HttpResponseMessage> SendAsync(
+            Func<Exception, HttpResponseMessage, Task> onError,
+            HttpCompletionOption completionOption,
+            CancellationToken? cancellationToken = null)
+        {
+            if (onError is null)
+            {
+                throw new ArgumentNullException(nameof(onError));
+            }
+
+            return await ExecuteSendAsync(
+                async resp => await Task.FromResult(resp),
+                async (exception, response) =>
+                {
+                    await onError(exception, response);
+                    return response;
+                },
+                cancellationToken,
+                completionOption);
+        }
+        public async Task<HttpResponseMessage> SendAsync(
+            Func<Exception, HttpResponseMessage, Task> onError,
+            CancellationToken? cancellationToken = null)
+        {
+            if (onError is null)
+            {
+                throw new ArgumentNullException(nameof(onError));
+            }
+
+            return await ExecuteSendAsync(
+                async resp => await Task.FromResult(resp),
+                async (exception, response) =>
+                {
+                    await onError(exception, response);
+                    return response;
+                },
+                cancellationToken);
+        }
+
+        public async Task<HttpResponseMessage> SendAsync(
+            HttpCompletionOption completionOption,
+            CancellationToken? cancellationToken = null)
+            => await ExecuteSendAsync(
+                onSuccess: async resp => await Task.FromResult(resp),
+                onError: null,
+                cancellationToken: cancellationToken,
+                completionOption: completionOption);
+
+        public async Task<HttpResponseMessage> SendAsync(
+            CancellationToken? cancellationToken = null)
+            => await ExecuteSendAsync(
+                onSuccess: async resp => await Task.FromResult(resp),
+                onError: null,
+                cancellationToken);
+
+
+        private async Task<TResponse> ExecuteSendAsync<TResponse>(
+            Func<HttpResponseMessage, Task<TResponse>> onSuccess,
+            Func<Exception, HttpResponseMessage, Task<TResponse>> onError,
+            CancellationToken? cancellationToken,
+            HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead)
         {
             Uri url;
             if(Uri.TryCreate(_config.Url, UriKind.Absolute, out url) == false)
@@ -171,8 +412,78 @@ namespace BWJ.Net.Http.RequestBuilder
 
                 _config.OnRequestConfigured.ForEach(action => action(req));
 
-                return await _config.Client.SendAsync(req);
+                HttpResponseMessage resp = null;
+                Exception exception = null;
+                for(var retry = 0; retry < _config.RetryCount; retry++)
+                {
+                    resp = null;
+                    exception = null;
+                    try
+                    {
+                        resp = cancellationToken.HasValue ?
+                            await _config.Client.SendAsync(req, completionOption, cancellationToken.Value) :
+                            await _config.Client.SendAsync(req, completionOption);
+
+                        var statusCodeSeries = (int)resp.StatusCode / 100;
+                        // if acceptable status code(s) were never explicitly defined by the developer,
+                        // the default is 2xx
+                        if(_config.AcceptStatusCodes.Count == 0 &&
+                            _config.AcceptStatusCodeSeries.Count == 0)
+                        {
+                            _config.AcceptStatusCodeSeries.Add(2);
+                        }
+
+                        if(false == _config.AcceptStatusCodeSeries.Any(s=>s == statusCodeSeries) &&
+                            false == _config.AcceptStatusCodes.Any(s=>s == (int)resp.StatusCode))
+                        {
+                            var requestException = new HttpRequestException($"Unacceptable status code {(int)resp.StatusCode} ({resp.StatusCode})");
+                            resp.StatusCode = resp.StatusCode;
+
+                            // unless the status code is 500 or 503, which could happen with a temporary
+                            // glitch on the host, there's no point in retrying invalid status codes
+                            // e.g. a bad request won't become a good one if you just retry
+                            if((new HttpStatusCode[] { HttpStatusCode.InternalServerError, HttpStatusCode.ServiceUnavailable})
+                                .Any(code=> code == resp.StatusCode))
+                            {
+                                throw requestException;
+                            }
+                            else
+                            {
+                                exception = requestException;
+                                break;
+                            }
+                        }
+
+                        return await onSuccess(resp);
+                    }
+                    catch (Exception ex)
+                    {
+                        exception = ex;
+                        Thread.Sleep(_config.RetryDelay);
+                    }
+                }
+
+                if (onError is not null)
+                {
+                    return await onError(exception, resp);
+                }
+                else
+                {
+                    throw exception;
+                }
             }
+        }
+
+        private static bool IsInteger(object obj)
+        {
+            return obj is int ||
+                obj is uint ||
+                obj is byte ||
+                obj is sbyte ||
+                obj is short ||
+                obj is ushort ||
+                obj is long ||
+                obj is ulong;
         }
     }
 }
