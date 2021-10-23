@@ -11,6 +11,11 @@ namespace BWJ.Net.Http.RequestBuilder
         public static Dictionary<string, string> ToDictionary<T>(T obj)
             where T : class
         {
+            if(obj is Dictionary<string, string>)
+            {
+                return obj as Dictionary<string, string>;
+            }
+
             NotNullOrEnumerable(obj, nameof(obj));
 
             var dict = new Dictionary<string, string>();
