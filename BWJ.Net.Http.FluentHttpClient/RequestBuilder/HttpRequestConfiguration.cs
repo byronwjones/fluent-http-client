@@ -18,8 +18,12 @@ namespace BWJ.Net.Http.RequestBuilder
         public HttpMethod Method { get; }
         public string Url { get; }
         public HttpContent Content { get; set; }
+        public int RetryCount { get; set; }
+        public int RetryDelay { get; set; }
+        public List<int> AcceptStatusCodes { get; set; } = new List<int>();
+        public List<int> AcceptStatusCodeSeries { get; } = new List<int>();
         public Dictionary<string, string> Headers { get; } = new Dictionary<string, string>();
-        public Dictionary<string, string> QueryParameters { get; set; }
+        public Dictionary<string, string> QueryParameters { get; set; } = new Dictionary<string, string>();
         public List<Action<HttpRequestMessage>> OnConfiguringRequest { get; }
             = new List<Action<HttpRequestMessage>>();
         public List<Action<HttpRequestMessage>> OnRequestConfigured { get; }
