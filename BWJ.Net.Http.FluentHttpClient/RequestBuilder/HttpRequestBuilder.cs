@@ -414,7 +414,7 @@ namespace BWJ.Net.Http.RequestBuilder
 
                 HttpResponseMessage resp = null;
                 Exception exception = null;
-                for(var retry = 0; retry < _config.RetryCount; retry++)
+                for(var retry = 0; retry < (_config.RetryCount + 1); retry++)
                 {
                     resp = null;
                     exception = null;
