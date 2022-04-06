@@ -13,7 +13,7 @@ namespace BWJ.Net.Http.RequestBuilder
         {
             BuilderUtils.NotNullOrEnumerable(queryParameters, nameof(queryParameters));
 
-            _config.QueryParameters = BuilderUtils.ToDictionary(queryParameters);
+            _config.QueryParameters = BuilderUtils.ToKeyValuePairCollection(queryParameters);
 
             return new HttpRequestBuilder(_config);
         }

@@ -34,7 +34,7 @@ namespace BWJ.Net.Http.RequestBuilder
         {
             BuilderUtils.NotNullOrEnumerable(form, nameof(form));
 
-            var dict = BuilderUtils.ToDictionary(form);
+            var dict = BuilderUtils.ToKeyValuePairCollection(form);
             _config.Content = new FormUrlEncodedContent(dict);
 
             return new HttpRequestWithQueryBuilder(_config);

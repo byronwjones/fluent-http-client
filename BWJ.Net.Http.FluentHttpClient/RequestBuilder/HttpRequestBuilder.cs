@@ -105,7 +105,7 @@ namespace BWJ.Net.Http.RequestBuilder
         public HttpRequestBuilder IncludeHeaders<T>(T headers)
             where T : class
         {
-            var dict = BuilderUtils.ToDictionary(headers);
+            var dict = BuilderUtils.ToKeyValuePairCollection(headers);
 
             foreach (var pair in dict)
             {
