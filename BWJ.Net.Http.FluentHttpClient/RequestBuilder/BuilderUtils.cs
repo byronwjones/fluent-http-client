@@ -26,7 +26,8 @@ namespace BWJ.Net.Http.RequestBuilder
                 if(prop.GetCustomAttribute<JsonIgnoreAttribute>() is null)
                 {
                     var name = GetFormName(prop);
-                    if(prop.GetValue(obj) is IEnumerable)
+                    object propValue = prop.GetValue(obj);
+                    if(propValue is not string && propValue is IEnumerable)
                     {
                         var arr = prop.GetValue(obj) as IEnumerable;
                         foreach(var item in arr)
@@ -34,7 +35,10 @@ namespace BWJ.Net.Http.RequestBuilder
                             collection.Add(new KeyValuePair<string, string>($"{name}[]", item?.ToString() ?? string.Empty));
                         }
                     }
-                    collection.Add(new KeyValuePair<string, string>(name, prop.GetValue(obj)?.ToString() ?? string.Empty));
+                    else
+                    {
+                        collection.Add(new KeyValuePair<string, string>(name, prop.GetValue(obj)?.ToString() ?? string.Empty));
+                    }
                 }
             }
 
