@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <RootNamespace>BWJ.Net.Http</RootNamespace>
-    <Version>0.2.1</Version>
+    <Version>0.3.1</Version>
     <Authors>Byron Jones</Authors>
     <Product>FluentHttpClient</Product>
     <Company>Byron Jones LLC</Company>
@@ -12,6 +12,7 @@
     <RepositoryUrl>https://github.com/byronwjones/fluent-http-client</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>HttpClient, Fluent API</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
