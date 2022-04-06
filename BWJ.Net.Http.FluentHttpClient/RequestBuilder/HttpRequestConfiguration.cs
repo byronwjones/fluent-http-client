@@ -23,7 +23,7 @@ namespace BWJ.Net.Http.RequestBuilder
         public List<int> AcceptStatusCodes { get; set; } = new List<int>();
         public List<int> AcceptStatusCodeSeries { get; } = new List<int>();
         public Dictionary<string, string> Headers { get; } = new Dictionary<string, string>();
-        public Dictionary<string, string> QueryParameters { get; set; } = new Dictionary<string, string>();
+        public IEnumerable<KeyValuePair<string, string>> QueryParameters { get; set; } = new Dictionary<string, string>();
         public List<Action<HttpRequestMessage>> OnConfiguringRequest { get; }
             = new List<Action<HttpRequestMessage>>();
         public List<Action<HttpRequestMessage>> OnRequestConfigured { get; }
