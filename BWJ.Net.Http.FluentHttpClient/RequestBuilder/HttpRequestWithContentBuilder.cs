@@ -51,7 +51,7 @@ namespace BWJ.Net.Http.RequestBuilder
             foreach (var prop in formProps)
             {
                 var name = BuilderUtils.GetFormName(prop);
-                if(prop.PropertyType.IsAssignableFrom(typeof(IFileContent)))
+                if(typeof(IFileContent).IsAssignableFrom(prop.PropertyType))
                 {
                     var value = prop.GetValue(form) as IFileContent;
                     FileContentValidator.AssertIsValid(value, prop.Name);
