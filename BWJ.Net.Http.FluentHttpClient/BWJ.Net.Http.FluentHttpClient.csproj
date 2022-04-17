@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <RootNamespace>BWJ.Net.Http</RootNamespace>
-    <Version>0.3.2</Version>
+    <Version>0.4.0</Version>
     <Authors>Byron Jones</Authors>
     <Product>FluentHttpClient</Product>
     <Company>Byron Jones LLC</Company>

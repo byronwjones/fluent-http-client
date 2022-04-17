@@ -21,13 +21,26 @@ namespace BWJ.Net.Http.RequestBuilder
             var collection = new List<KeyValuePair<string, string>>();
             var formType = obj.GetType();
             var formProps = formType.GetProperties();
+            if(formProps.Length == 0)
+            {
+                throw new ArgumentException("Object must have public properties", nameof(obj));
+            }
+
             foreach (var prop in formProps)
             {
                 if(prop.GetCustomAttribute<JsonIgnoreAttribute>() is null)
                 {
                     var name = GetFormName(prop);
                     object propValue = prop.GetValue(obj);
-                    if(propValue is not string && propValue is IEnumerable)
+                    if(propValue is IDictionary)
+                    {
+                        var dict = prop.GetValue(obj) as IDictionary;
+                        foreach (var key in dict.Keys)
+                        {
+                            collection.Add(new KeyValuePair<string, string>($"{name}[{key}]", dict[key]?.ToString() ?? string.Empty));
+                        }
+                    }
+                    else if(propValue is not string && propValue is IEnumerable)
                     {
                         var arr = prop.GetValue(obj) as IEnumerable;
                         foreach(var item in arr)
